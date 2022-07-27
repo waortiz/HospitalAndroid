@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -116,17 +117,57 @@ public class LinearLayoutActivity extends AppCompatActivity {
             error = true;
         }
 
-        if(error)  {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Error al guardar los datos").
+        if(!error)  {
+            new GuardarDatosAsincrono().execute();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(LinearLayoutActivity.this);
+            builder.setMessage("Error en los datos. Por favor verifique").
                     setPositiveButton("Aceptar",
                             new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                        }
-                    });
+                                }
+                            });
             builder.show();
         }
+    }
+
+    private class GuardarDatosAsincrono extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            //Conecta a la base de datos
+
+            return true;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... voids) {
+
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            String mensaje;
+            if(result) {
+                mensaje = "Datos guardados exitosamente";
+            } else {
+                mensaje = "Error al guardar los datos";
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(LinearLayoutActivity.this);
+            builder.setMessage(mensaje).
+                    setPositiveButton("Aceptar",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+            builder.show();
+        }
+
     }
 }

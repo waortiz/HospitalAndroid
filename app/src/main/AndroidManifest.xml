@@ -4,6 +4,7 @@
     package="com.example.hospital">
 
     <application
+        android:name=".HospitalApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,26 +15,30 @@
         android:theme="@style/Theme.Hospital"
         tools:targetApi="31">
         <activity
-            android:name=".NavegationDrawerActivity"
+            android:name="com.example.hospital.actividades.ui.login.LoginActivity"
             android:exported="true"
-            android:label="@string/title_activity_navegation_drawer"
-            android:theme="@style/Theme.Hospital.NoActionBar">
-
-        </activity>
-        <activity
-            android:name=".RelativeLayoutActivity"
-            android:exported="true"></activity>
-        <activity
-            android:name=".TableLayoutActivity"
-            android:exported="true"></activity>
-        <activity
-            android:name=".LinearLayoutActivity"
-            android:exported="true">
+            android:label="@string/title_activity_login" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".NavegationDrawerActivity"
+            android:exported="true"
+            android:label="@string/title_activity_navegation_drawer"
+            android:theme="@style/Theme.Hospital.NoActionBar"></activity>
+        <activity
+            android:name=".RelativeLayoutActivity"
+            android:exported="true" />
+        <activity
+            android:name=".TableLayoutActivity"
+            android:exported="true" />
+        <activity
+            android:name=".LinearLayoutActivity"
+            android:exported="true">
+
         </activity>
         <activity
             android:name=".FrameLayoutActivity"
