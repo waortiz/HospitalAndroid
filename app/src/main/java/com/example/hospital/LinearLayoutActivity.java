@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -16,8 +17,10 @@ import android.widget.Spinner;
 
 import com.example.hospital.adaptadores.MaestroAdapter;
 import com.example.hospital.entidades.IMaestro;
+import com.example.hospital.entidades.Paciente;
 import com.example.hospital.entidades.TipoDocumento;
 import com.example.hospital.repositorio.RepositorioMaestro;
+import com.example.hospital.repositorio.RepositorioPaciente;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,6 +34,7 @@ public class LinearLayoutActivity extends AppCompatActivity {
     private EditText txtFechaNacimiento;
     private List<IMaestro> tiposDocumento;
     private IMaestro tipoDocumento;
+    private Paciente paciente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +122,17 @@ public class LinearLayoutActivity extends AppCompatActivity {
         }
 
         if(!error)  {
+            paciente = new Paciente();
+            paciente.setNombres(txtNombre.getText().toString());
+            paciente.setTelefono(txtTelefono.getText().toString());
+            paciente.setNumeroDocumento("31231232132");
+            Calendar c = Calendar.getInstance();
+            //c.set(year, month, dayOfMonth);
+            paciente.setFechaNacimiento(c .getTime());
+            paciente.setIdTipoDocumento(tipoDocumento.getId());
             new GuardarDatosAsincrono().execute();
         } else {
+            Log.e("paciente","Error en los datos. Por favor verifique");
             AlertDialog.Builder builder = new AlertDialog.Builder(LinearLayoutActivity.this);
             builder.setMessage("Error en los datos. Por favor verifique").
                     setPositiveButton("Aceptar",
@@ -139,6 +152,8 @@ public class LinearLayoutActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... voids) {
 
             //Conecta a la base de datos
+            RepositorioPaciente repositorioPaciente = new RepositorioPaciente(LinearLayoutActivity.this);
+            repositorioPaciente.ingresarPaciente(paciente);
 
             return true;
         }
