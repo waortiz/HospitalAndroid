@@ -5,7 +5,9 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 
+import com.example.hospital.converters.DateConverter;
 import com.example.hospital.dao.IPacienteDao;
 import com.example.hospital.entidades.Paciente;
 
@@ -13,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Paciente.class}, version = 1, exportSchema = false)
+@TypeConverters({DateConverter.class})
 public abstract class HospitalDataBase extends RoomDatabase {
 
     public abstract IPacienteDao pacienteDao();

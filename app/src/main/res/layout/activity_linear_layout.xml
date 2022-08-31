@@ -5,10 +5,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText android:id="@+id/txtNombre"
+    <EditText android:id="@+id/txtNombres"
        android:layout_width="match_parent"
         android:hint="Nombre"
     android:layout_height="wrap_content" />
+
+    <EditText android:id="@+id/txtApellidos"
+        android:layout_width="match_parent"
+        android:hint="Apellidos"
+        android:layout_height="wrap_content" />
+
+    <Spinner android:id="@+id/spnTiposDocumento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></Spinner>
+
+    <EditText android:id="@+id/txtNumeroDocumento"
+        android:maxLength="20"
+        android:layout_width="match_parent"
+        android:hint="Número de Documento"
+        android:layout_height="wrap_content" />
 
     <EditText android:id="@+id/txtTelefono"
         android:maxLength="10"
@@ -22,10 +37,6 @@
         android:layout_height="wrap_content"
         android:inputType="date"
         ></EditText>
-
-    <Spinner android:id="@+id/spnTiposDocumento"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
 
     <Button android:id="@+id/btnAceptar"
     android:layout_width="match_parent"

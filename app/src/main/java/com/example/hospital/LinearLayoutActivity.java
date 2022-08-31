@@ -16,20 +16,29 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.example.hospital.adaptadores.MaestroAdapter;
+import com.example.hospital.api.ApiUtils;
+import com.example.hospital.api.IPacienteService;
+import com.example.hospital.api.Respuesta;
 import com.example.hospital.entidades.IMaestro;
 import com.example.hospital.entidades.Paciente;
 import com.example.hospital.entidades.TipoDocumento;
 import com.example.hospital.repositorio.RepositorioMaestro;
 import com.example.hospital.repositorio.RepositorioPaciente;
+import com.example.hospital.utilidades.Utilidad;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LinearLayoutActivity extends AppCompatActivity {
     private Spinner spnTiposDocumento;
     private Button btnAceptar;
-    private EditText txtNombre;
+    private EditText txtNombres;
+    private EditText txtApellidos;
+    private EditText txtNumeroDocumento;
     private EditText txtTelefono;
     private EditText txtFechaNacimiento;
     private List<IMaestro> tiposDocumento;
@@ -43,7 +52,9 @@ public class LinearLayoutActivity extends AppCompatActivity {
 
         spnTiposDocumento = findViewById(R.id.spnTiposDocumento);
         btnAceptar = findViewById(R.id.btnAceptar);
-        txtNombre = findViewById(R.id.txtNombre);
+        txtNombres = findViewById(R.id.txtNombres);
+        txtApellidos = findViewById(R.id.txtApellidos);
+        txtNumeroDocumento = findViewById(R.id.txtNumeroDocumento);
         txtTelefono = findViewById(R.id.txtTelefono);
         txtFechaNacimiento = findViewById(R.id.txtFechaNacimiento);
         txtFechaNacimiento.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +62,7 @@ public class LinearLayoutActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Calendar c = Calendar.getInstance();
                 DatePickerDialog dialog = new DatePickerDialog(LinearLayoutActivity.this,
-                        com.google.android.material.R.style.MaterialAlertDialog_MaterialComponents_Picker_Date_Calendar,
+                        R.style.Theme_Hospital,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -100,15 +111,15 @@ public class LinearLayoutActivity extends AppCompatActivity {
 
     private void guardarDatos() {
         boolean error = false;
-        txtNombre.setError(null);
-        if(txtNombre.getText().toString().isEmpty())
+        txtNombres.setError(null);
+        if(txtNombres.getText().toString().isEmpty())
         {
-            txtNombre.setError("Debe ingresar el nombre");
+            txtNombres.setError("Debe ingresar el nombre");
             error = true;
         }
         if(txtTelefono.getText().toString().isEmpty())
         {
-            txtNombre.setError("Debe ingresar el teléfono");
+            txtTelefono.setError("Debe ingresar el teléfono");
             error = true;
         }
         if(tipoDocumento == null)
@@ -117,18 +128,17 @@ public class LinearLayoutActivity extends AppCompatActivity {
         }
         if(txtFechaNacimiento.getText().toString().isEmpty())
         {
-            txtNombre.setError("Debe ingresar la fecha de nacimiento");
+            txtFechaNacimiento.setError("Debe ingresar la fecha de nacimiento");
             error = true;
         }
 
         if(!error)  {
             paciente = new Paciente();
-            paciente.setNombres(txtNombre.getText().toString());
+            paciente.setNombres(txtNombres.getText().toString());
+            paciente.setApellidos(txtApellidos.getText().toString());
             paciente.setTelefono(txtTelefono.getText().toString());
-            paciente.setNumeroDocumento("31231232132");
-            Calendar c = Calendar.getInstance();
-            //c.set(year, month, dayOfMonth);
-            paciente.setFechaNacimiento(c .getTime());
+            paciente.setNumeroDocumento(txtNumeroDocumento.getText().toString());
+            paciente.setFechaNacimiento(Utilidad.obtenerFecha(txtFechaNacimiento.getText().toString()));
             paciente.setIdTipoDocumento(tipoDocumento.getId());
             new GuardarDatosAsincrono().execute();
         } else {
@@ -167,22 +177,46 @@ public class LinearLayoutActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
             String mensaje;
             if(result) {
-                mensaje = "Datos guardados exitosamente";
+                guardarPacienteServicioExterno(paciente);
             } else {
-                mensaje = "Error al guardar los datos";
+                mostrarMensaje("Error al guardar los datos");
+            }
+        }
+    }
+
+    public void guardarPacienteServicioExterno(Paciente paciente) {
+        String TAG = "Paciente";
+        IPacienteService pacienteService = ApiUtils.getPacienteService();
+        pacienteService.guardar(paciente).enqueue(new Callback<Respuesta>() {
+            @Override
+            public void onResponse(Call<Respuesta> call, Response<Respuesta> response) {
+
+                if(response.isSuccessful()) {
+                    mostrarMensaje("Paciente creado con consecutivo " + response.body().getId().toString());
+                    Log.i(TAG, "Paciente creado con consecutivo " + response.body().getId().toString());
+                }
             }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(LinearLayoutActivity.this);
-            builder.setMessage(mensaje).
-                    setPositiveButton("Aceptar",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onFailure(Call<Respuesta> call, Throwable t) {
+                Log.e(TAG, "No fue posible crear el paciente: " + t.getMessage());
+            }
+        });}
 
-                                }
-                            });
-            builder.show();
-        }
+    public void mostrarMensaje(String texto) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(texto).setPositiveButton("Aceptar",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
 
+                            }
+                        })
+                .setNegativeButton("Cancelar",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+        builder.show();
     }
 }

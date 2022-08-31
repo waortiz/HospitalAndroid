@@ -20,6 +20,10 @@ public class Paciente {
     private String nombres;
 
     @NonNull
+    @ColumnInfo(name = "apellidos")
+    private String apellidos;
+
+    @NonNull
     @ColumnInfo(name = "telefono")
     private String telefono;
 
@@ -85,5 +89,14 @@ public class Paciente {
 
     public void setFechaNacimiento(@NonNull Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    @NonNull
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(@NonNull String apellidos) {
+        this.apellidos = apellidos;
     }
 }
